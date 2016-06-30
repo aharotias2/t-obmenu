@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	printf(
 		"<separator label=\"編集\" />\n"
 		"<item label=\"Open the location with %s\" icon=\"/home/tk2/.icons/applications/%s.png\">\n"
-		"  <action name=\"Execute\"><execute>%s %s</execute></action>\n"
+		"  <action name=\"Execute\"><execute>%s &quot;%s&quot;</execute></action>\n"
 		"</item>\n",
 		g_filer_name, g_filer_name, g_filer_name, g_dir_name
 	);
