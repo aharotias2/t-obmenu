@@ -27,6 +27,8 @@ filetest: $(FILETEST_OBJ)
 utf8test: $(UTF8TEST_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
+install:
+	cp t-obmenu $(DESTDIR)
 
 .PHONY: clean
 clean:

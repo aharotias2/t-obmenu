@@ -1,7 +1,11 @@
 #include "obmenu.h"
 
 /* Global variables */
-char *g_cmd_name = NULL, *g_filer_name = NULL, *g_browser_name = NULL, *g_dir_name = NULL;
+char *g_cmd_name = NULL;
+char *g_filer_name = NULL;
+char *g_browser_name = NULL;
+char *g_dir_name = NULL;
+char *g_icon_dir = NULL;
 
 /* Program */
 int main(int argc, char **argv) {
@@ -15,6 +19,7 @@ int main(int argc, char **argv) {
 	g_dir_name = getenv("HOME");
 	g_browser_name = "firefox";
 	g_filer_name = "rox";
+	g_icon_dir = "/usr/share/icons/hicolor/32x32/apps";
 
 	/* If applications is specified. */
 	for (i = 1; i < argc; i++) {
@@ -24,6 +29,7 @@ int main(int argc, char **argv) {
 				case 'd': g_dir_name = get_full_path(argv[i] + 2); break;
 				case 'b': g_browser_name = argv[i] + 2; break;
 				case 'f': g_filer_name = argv[i] + 2; break;
+				case 'i': g_icon_dir = get_full_path(argv[i] + 2); break;
 				default:
 				    exit(1);
 			}
@@ -39,15 +45,21 @@ int main(int argc, char **argv) {
 
 	printf(
 		"<separator label=\"編集\" />\n"
-		"<item label=\"Open the location with %s\" icon=\"/home/tk2/.icons/applications/%s.png\">\n"
+		"<item label=\"Open the location with %s\" icon=\"%s/%s.png\">\n"
 		"  <action name=\"Execute\"><execute>%s &quot;%s&quot;</execute></action>\n"
 		"</item>\n",
-		g_filer_name, g_filer_name, g_filer_name, g_dir_name
+		g_filer_name, g_icon_dir, g_filer_name, g_filer_name, g_dir_name
 	);
 
 	printf("</openbox_pipe_menu>\n");
 
-	free(g_dir_name);
+	if (g_dir_name != NULL) {
+		free(g_dir_name);
+	}
+
+	if (g_icon_dir != NULL) {
+		free(g_icon_dir);
+	}
 	return 0;
 }
 
@@ -95,8 +107,9 @@ int print_dir_entries(char *dir_name) {
 						);
 					}
 					printf(
-						"  icon=\"/home/tk2/.icons/applications/%s.png\">\n"
+						"  icon=\"%s/%s.png\">\n"
 						"  <action name=\"Execute\">\n",
+						g_icon_dir,
 						data.icon
 					);
 					if (data.has_gui) {
@@ -105,7 +118,8 @@ int print_dir_entries(char *dir_name) {
 						);
 					} else {
 						printf(
-						"    <execute>urxvt -icon &quot;~/.icons/applications/%s&quot; -title &quot;%s&quot; -e &quot;%s&quot;</execute>\n",
+						"    <execute>urxvt -icon &quot;%s/%s.png&quot; -title &quot;%s&quot; -e &quot;%s&quot;</execute>\n",
+						g_icon_dir,
 						data.command,
 					   	data.command,
 						data.command
@@ -127,13 +141,14 @@ int print_dir_entries(char *dir_name) {
 				"  icon=\"" CATEGORY_ICON "\"\n"
 				"  id=\"%s\"\n"
 				"  label=\"%s\"\n"
-				"  execute=\"%s -d%s -b%s -f%s\" />\n",
+				"  execute=\"%s -d%s -b%s -f%s -i%s\" />\n",
 				item->str,
 				item->str,
 				g_cmd_name,
 				escaped_path,
 				g_browser_name,
-				g_filer_name
+				g_filer_name,
+				g_icon_dir
 			);
 			free(escaped_path);
 			break;
